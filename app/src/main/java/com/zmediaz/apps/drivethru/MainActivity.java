@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
                 "Today, May 17 - Clear - 17°C / 15°C",
                 "Tomorrow - Cloudy - 19°C / 15°C",
                 "Thursday - Rainy- 30°C / 11°C",
-                "Friday - Thunderstorms - 21°C / 9°C",
+                "Friday - Thunderstorm - 21°C / 9°C",
                 "Saturday - Thunderstorms - 16°C / 7°C",
                 "Sunday - Rainy - 16°C / 8°C",
                 "Monday - Partly Cloudy - 15°C / 10°C",
