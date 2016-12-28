@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DriveThru</string>
+    <!--Menu Label-->
+    <string name="search">Search</string>
 </resources>

@@ -1,8 +1,12 @@
 package com.zmediaz.apps.drivethru;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     //    Field to Store the Movie display TextView
@@ -36,5 +40,29 @@ public class MainActivity extends AppCompatActivity {
             mMovieTextView.append(dummyWeatherDay + "\n\n\n");
 
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // COMPLETED (9) Within onCreateOptionsMenu, use
+        // getMenuInflater().inflate to inflate the menu
+        getMenuInflater().inflate(R.menu.main, menu);
+        // COMPLETED (10) Return true to display your menu it
+        // is a boolean return
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemThatWasClickedId = item.getItemId();
+        if (itemThatWasClickedId == R.id.action_search) {
+            Context context = MainActivity.this;
+            String textToShow = "Search clicked";
+            Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // If you do NOT handle the menu click,
+        // return super.onOptionsItemSelected to let Android handle the menu click
+        return super.onOptionsItemSelected(item);
     }
 }
