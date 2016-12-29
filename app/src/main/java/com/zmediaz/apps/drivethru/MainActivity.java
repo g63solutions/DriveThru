@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mMovieTextView;
     private TextView mDisplay;
     private String mKey;
+    private String mSelector;
 
 
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         mMovieTextView = (TextView) findViewById(R.id.tv_movie_data);
         mDisplay = (TextView) findViewById(R.id.tv_display);
         mKey = getString(R.string.api);
+        mSelector = "popular";
+
 
 //      Dummy Data
         String[] dummyWeatherData = {
@@ -70,9 +73,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
-            String selection = "popular";
 
-            makeGithubSearchQuery();
+
+            if (mSelector == "popular") {
+
+                makeGithubSearchQuery(mSelector);
+                mSelector = "top_rated";
+            } else {
+                makeGithubSearchQuery(mSelector);
+                mSelector = "popular";
+            }
 
             Context context = MainActivity.this;
             String textToShow = "Search clicked";
@@ -84,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void makeGithubSearchQuery() {
-        String githubQuery = "popular";
+    private void makeGithubSearchQuery(String selection) {
+        String githubQuery = selection;
         URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery, mKey);
         mDisplay.setText(githubSearchUrl.toString());
     }
