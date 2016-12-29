@@ -8,9 +8,17 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zmediaz.apps.drivethru.utilities.NetworkUtils;
+
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
     //    Field to Store the Movie display TextView
     private TextView mMovieTextView;
+    private TextView mDisplay;
+    private String mKey;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie);
 //      View cast to TextView and stored in variable
         mMovieTextView = (TextView) findViewById(R.id.tv_movie_data);
+        mDisplay = (TextView) findViewById(R.id.tv_display);
+        mKey = getString(R.string.api);
+
 //      Dummy Data
         String[] dummyWeatherData = {
                 "Today, May 17 - Clear - 17°C / 15°C",
@@ -49,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         // COMPLETED (10) Return true to display your menu it
         // is a boolean return
+
+
+
         return true;
     }
 
@@ -56,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
+            String selection = "popular";
+
+            makeGithubSearchQuery();
+
             Context context = MainActivity.this;
             String textToShow = "Search clicked";
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
@@ -65,4 +83,11 @@ public class MainActivity extends AppCompatActivity {
         // return super.onOptionsItemSelected to let Android handle the menu click
         return super.onOptionsItemSelected(item);
     }
+
+    private void makeGithubSearchQuery() {
+        String githubQuery = "popular";
+        URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery, mKey);
+        mDisplay.setText(githubSearchUrl.toString());
+    }
+
 }
