@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*Network Thread call "new getHttpTask().execute(selectionUrl);"
     * pass in the parameter for the background task. doInBackground(URL... params)
-    * is a params array thats why it has 0 the first item in array. You return to the post execute*/
+    * is a params array that's why it has 0 the first item in array. You return to the post execute*/
     public class getHttpTask extends AsyncTask<URL, Void, String> {
         @Override
         protected String doInBackground(URL... params) {
