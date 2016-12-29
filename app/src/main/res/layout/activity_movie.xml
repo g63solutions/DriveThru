@@ -8,14 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_display"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_weight="1"
-            android:padding="16dp"
-            android:textSize="20sp" />
+
 
         <ScrollView
             android:layout_width="match_parent"
@@ -25,10 +18,11 @@
 
 
             <TextView
-
-                android:id="@+id/tv_movie_data"
+                android:id="@+id/tv_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:layout_weight="1"
                 android:padding="16dp"
                 android:textSize="20sp" />
         </ScrollView>
