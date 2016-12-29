@@ -15,35 +15,28 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    //    Field to Store the Movie display TextView
-    //private TextView mMovieTextView;
+
     private TextView mMainTV;
     private String mKey;
     private String mSelector;
-
     private MenuItem mMenuItem;
-    private String mPopular = "Popular";
-    private String mTopRated = "Top Rated";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
-//      View cast to TextView and stored in variable
-        //mMovieTextView = (TextView) findViewById(R.id.tv_movie_data);
+//
         mMainTV = (TextView) findViewById(R.id.tv_display);
         mKey = getString(R.string.api);
         mSelector = "popular";
+
         loadMain();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // COMPLETED (9) Within onCreateOptionsMenu, use
-        // getMenuInflater().inflate to inflate the menu
+
         getMenuInflater().inflate(R.menu.main, menu);
-        // COMPLETED (10) Return true to display your menu it
-        // is a boolean return
 
         mMenuItem = menu.findItem(R.id.action_search);
 
@@ -70,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     //Loads menu when app starts
     private void loadMain() {
 
-        if (mSelector == "popular") {
+        if (mSelector.equals("popular")) {
 
             urlQuery(mSelector);
             mSelector = "top_rated";
@@ -84,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
     //Loads Main menu from button press
     private void loadMainMenu() {
 
-        if (mSelector == "popular") {
+        String mPopular = "Popular";
+        String mTopRated = "Top Rated";
+
+        if (mSelector.equals("popular")) {
 
             urlQuery(mSelector);
             mSelector = "top_rated";
@@ -98,11 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void urlQuery(String selection) {
-        String uSelection = selection;
-        URL selectionUrl = NetworkUtils.buildUrl(uSelection, mKey);
-        //mDisplay.setText(selectionUrl.toString());
-        new getHttpTask().execute(selectionUrl);
+        URL selectionUrl = NetworkUtils.buildUrl(selection, mKey);
 
+        new getHttpTask().execute(selectionUrl);
     }
 
     /*Network Thread call "new getHttpTask().execute(selectionUrl);"
