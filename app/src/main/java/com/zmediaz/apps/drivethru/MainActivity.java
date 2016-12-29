@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             return jsonData;
         }
 
-        //After thread has finished executing
+        //After thread has finished executing return from do in background goes here
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null && !jsonData.equals("")) {
