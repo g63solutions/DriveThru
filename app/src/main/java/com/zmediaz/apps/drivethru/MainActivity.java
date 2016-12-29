@@ -21,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
     private String mKey;
     private String mSelector;
 
+    private MenuItem mMenuItem;
+    private String mPopular = "Popular";
+    private String mTopRated = "Top Rated";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // COMPLETED (10) Return true to display your menu it
         // is a boolean return
 
-
+        mMenuItem = menu.findItem(R.id.action_search);
 
         return true;
     }
@@ -51,11 +55,10 @@ public class MainActivity extends AppCompatActivity {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
 
-            loadMain();
-
+            loadMainMenu();
 
             Context context = MainActivity.this;
-            String textToShow = "Search clicked";
+            String textToShow = "Sort Menu clicked";
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -64,14 +67,32 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Loads menu when app starts
     private void loadMain() {
+
         if (mSelector == "popular") {
 
             urlQuery(mSelector);
             mSelector = "top_rated";
+
         } else {
             urlQuery(mSelector);
             mSelector = "popular";
+        }
+    }
+
+    //Loads Main menu from button press
+    private void loadMainMenu() {
+
+        if (mSelector == "popular") {
+
+            urlQuery(mSelector);
+            mSelector = "top_rated";
+            mMenuItem.setTitle(mPopular);
+        } else {
+            urlQuery(mSelector);
+            mSelector = "popular";
+            mMenuItem.setTitle(mTopRated);
         }
     }
 
