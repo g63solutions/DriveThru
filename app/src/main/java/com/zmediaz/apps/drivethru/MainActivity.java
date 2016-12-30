@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,14 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zmediaz.apps.drivethru.utilities.NetworkUtils;
+import com.zmediaz.apps.drivethru.utilities.TMDBJsonUtils;
 
-import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mMainTV;
-    private String mKey;
+    private RecyclerView mRecyclerView;
+    private MovieAdapter mMovieAdapter;
+
+    String mKey;
     private String mSelector;
     private MenuItem mMenuItem;
 
@@ -32,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 //
-        mMainTV = (TextView) findViewById(R.id.tv_display);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mMovieAdapter = new MovieAdapter();
+        mRecyclerView.setAdapter(mMovieAdapter);
+
         mKey = getString(R.string.api);
         mSelector = "popular";
 
@@ -104,15 +115,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void urlQuery(String selection) {
-        URL selectionUrl = NetworkUtils.buildUrl(selection, mKey);
 
-        new getHttpTask().execute(selectionUrl);
+
+        new getHttpTask().execute(selection, mKey);
     }
 
     /*Network Thread call "new getHttpTask().execute(selectionUrl);"
     * pass in the parameter for the background task. doInBackground(URL... params)
     * is a params array that's why it has 0 the first item in array. You return to the post execute*/
-    public class getHttpTask extends AsyncTask<URL, Void, String> {
+    public class getHttpTask extends AsyncTask<String, Void, String[]> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -120,24 +131,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... params) {
-            URL searchUrl = params[0];
-            String jsonData = null;
+        protected String[] doInBackground(String... params) {
+            String searchUrl = params[0];
+            String key = params[1];
+
+            URL movieRequestUrl = NetworkUtils.buildUrl(searchUrl, key);
+
+
             try {
-                jsonData = NetworkUtils.getResponseFromHttpUrl(searchUrl);
-            } catch (IOException e) {
+                String jsonData = NetworkUtils
+                        .getResponseFromHttpUrl(movieRequestUrl);
+
+                String[] simpleJsonMovieData = TMDBJsonUtils
+                        .getSimpleMovieStringsFromJson(MainActivity.this, jsonData);
+
+                return simpleJsonMovieData;
+
+            } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
-            return jsonData;
+
         }
 
         //After thread has finished executing return from do in background goes here
         @Override
-        protected void onPostExecute(String jsonData) {
+        protected void onPostExecute(String[] jsonData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (jsonData != null && !jsonData.equals("")) {
+            if (jsonData != null) {
                 showJsonDataView();
-                mMainTV.setText(jsonData);
+                mMovieAdapter.setMovieData(jsonData);
             } else {
                 showErrorMessage();
             }
@@ -147,12 +170,12 @@ public class MainActivity extends AppCompatActivity {
             // First, make sure the error is invisible
             mErrorMessageDisplay.setVisibility(View.INVISIBLE);
             // Then, make sure the JSON data is visible
-            mMainTV.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
 
         private void showErrorMessage() {
             // First, hide the currently visible data
-            mMainTV.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
             // Then, show the error
             mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
@@ -160,5 +183,3 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
-//Create error message that shows if data is not null or empty
-//Create Progress Bar that is initially invisible and shows as soon as thread is finished.
