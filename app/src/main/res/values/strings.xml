@@ -3,7 +3,7 @@
     <!--Menu Label-->
     <string name="main_menu">Popular</string>
     <!--Insert API Key Here-->
-    <string name="api">877b268995b9d5ab2cc80769612c2d16</string>
+    <string name="api">SECRET</string>
      <string name="error_message">
         Failed to get results. Please try again.
     </string>
