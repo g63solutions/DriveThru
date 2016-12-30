@@ -16,12 +16,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private String[] mMovieData;
 
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         public final TextView mMovieTextView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
             mMovieTextView = (TextView) view.findViewById(R.id.tv_movie_data);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            String movie = mMovieData[adapterPosition];
+            mClickHandler.onClick(movie);
         }
     }
 
@@ -51,6 +60,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void setMovieData(String[] movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
+    }
+
+    private final MovieAdapterOnClickHandler mClickHandler;
+
+    public interface MovieAdapterOnClickHandler {
+        void onClick(String movie);
+    }
+
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
     }
 
 }

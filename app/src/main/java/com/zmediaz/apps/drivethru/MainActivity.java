@@ -18,7 +18,8 @@ import com.zmediaz.apps.drivethru.utilities.TMDBJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
         mKey = getString(R.string.api);
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+
 
         loadMain();
     }
@@ -145,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 String[] simpleJsonMovieData = TMDBJsonUtils
                         .getSimpleMovieStringsFromJson(MainActivity.this, jsonData);
 
-                return simpleJsonMovieData;
+                return
+                        simpleJsonMovieData;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,6 +182,13 @@ public class MainActivity extends AppCompatActivity {
             // Then, show the error
             mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onClick(String movie) {
+        Context context = this;
+        Toast.makeText(context, movie, Toast.LENGTH_SHORT)
+                .show();
     }
 }
 
