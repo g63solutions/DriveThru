@@ -11,8 +11,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--TODO 4 Make singleTop what does it mean ?  most things
-        should be single top I think-->
+        <!--TODO 4 Make singleTop what does it mean ?  Use android:launchMode="singleTop"
+        to make sure that a new instance of MainActivity isn't spawned when you press the
+        back button. Spawning a new instance of MainActivity is not memory efficient.Then,
+        in the actual SettingsActivity you should override the home button to act like the
+        back button:
+
+        if (id == android.R.id.home) {
+        onBackPressed();}
+        and you should display home as up, to allow up navigation:
+
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);-->
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

@@ -27,6 +27,15 @@ public class Settings extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        /*Then,
+        in the actual SettingsActivity you should override the home button to act like the
+        back button:
+
+        if (id == android.R.id.home) {
+        onBackPressed();}
+        and you should display home as up, to allow up navigation:
+
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
         if (id == android.R.id.home) {
             onBackPressed();
         }
