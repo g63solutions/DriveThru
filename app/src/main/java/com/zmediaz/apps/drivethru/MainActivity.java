@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
             return true;
         }
-        // TODO6 Launch SettingsActivity when the Settings option is clicked
+        // TODO 6 Launch SettingsActivity when the Settings option is clicked
         if (itemThatWasClickedId == R.id.action_settings) {
             Intent startSettingsActivity = new Intent(this, Settings.class);
             startActivity(startSettingsActivity);
