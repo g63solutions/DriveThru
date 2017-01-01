@@ -15,7 +15,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private String[] mMovieData;
 
-
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         public final TextView mMovieTextView;

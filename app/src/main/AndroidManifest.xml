@@ -10,7 +10,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <!--TODO 4 Make singleTop what does it mean ?  most things
+        should be single top I think-->
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,6 +31,12 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".Settings"
+            android:label="@string/action_settings">
+
         </activity>
     </application>
 

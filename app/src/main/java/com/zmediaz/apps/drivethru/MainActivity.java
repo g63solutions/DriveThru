@@ -27,6 +27,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]> {
 
+
     private static final String MOVIE_URL = "popular";
 
     private RecyclerView mRecyclerView;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
-    //TODO 1 You need an ID to identify the loader its the first parameter
+    //ATL 1 You need an ID to identify the loader its the first parameter
     private static final int LOADER_INT = 7;
 
     @Override
@@ -62,10 +63,10 @@ public class MainActivity extends AppCompatActivity
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-
+        //TODO 0 need a bundle here to save popular/top rated when clicked back
         loadMain();
 
-        //TODO 2 Prepare the loader in onCreate.  Either re-connect with an existing one, or start a new one
+        //ATL 2 Prepare the loader in onCreate.  Either re-connect with an existing one, or start a new one
         LoaderManager.LoaderCallbacks<String[]> callback = MainActivity.this;
         getSupportLoaderManager().initLoader(LOADER_INT, null, callback);
     }
@@ -74,23 +75,30 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        mMenuItem = menu.findItem(R.id.action_search);
+        mMenuItem = menu.findItem(R.id.action_sort);
 
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
-        if (itemThatWasClickedId == R.id.action_search) {
+        if (itemThatWasClickedId == R.id.action_sort) {
 
             loadMainMenu();
 
             Context context = MainActivity.this;
             String textToShow = "Sort Menu clicked";
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // TODO6 Launch SettingsActivity when the Settings option is clicked
+        if (itemThatWasClickedId == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, Settings.class);
+            startActivity(startSettingsActivity);
             return true;
         }
         // If you do NOT handle the menu click,
@@ -140,13 +148,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*TODO 3 If your loader requires a variable bundle it. Its an args get the args back with the keys.*/
+    /*ATL 3 If your loader requires a variable bundle it. Its an args get the args back with the keys.*/
     private void urlQuery(String selection) {
         URL movieRequestUrl = NetworkUtils.buildUrl(selection, mKey);
         Bundle queryBundle = new Bundle();
         queryBundle.putString(MOVIE_URL, movieRequestUrl.toString());
 
-        /*TODO 4 LoadManager Starts it pass the ID and the bundle*/
+        /*ATL 4 LoadManager Starts it pass the ID and the bundle*/
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> movieSearchLoader = loaderManager.getLoader(LOADER_INT);
         if (movieSearchLoader == null) {
@@ -158,12 +166,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    //TODO 5 Returns a String[] to onLoadFinished
+    //ATL 5 Returns a String[] to onLoadFinished
     @Override
     public Loader<String[]> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<String[]>(this) {
 
-            /*TODO 6 This String array will hold and help cache our weather data from deliverResult  */
+            /*ATL 6 This String array will hold and help cache our weather data from deliverResult  */
             String[] mMovieJson = null;
 
             @Override
@@ -172,7 +180,7 @@ public class MainActivity extends AppCompatActivity
                 if (args == null) {
                     return;
                 }
-                //TODO Load data if it has been destroyed and recreated
+                //ATL Load data if it has been destroyed and recreated
                 if (mMovieJson != null) {
                     deliverResult(mMovieJson);
                 } else {
@@ -185,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             public String[] loadInBackground() {
                 String queryUrl = args.getString(MOVIE_URL);
 
-                
+
                 if (queryUrl == null || TextUtils.isEmpty(queryUrl)) {
                     return null;
                 }

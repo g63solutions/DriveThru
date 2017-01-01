@@ -52,4 +52,22 @@ public class DetailActivity extends AppCompatActivity {
         menuItem.setIntent(createShareForecastIntent());
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //TODO 7 get the id of the item that was clicked from the item param
+        int id = item.getItemId();
+
+        //TODO 8 Launch Settings Activity when the menu is clicked
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, Settings.class);
+            startActivity(startSettingsActivity);
+            return true;
+
+
+        }
+        //TODO 9 Dont forget to return if that was another option click
+        return super.onOptionsItemSelected(item);
+    }
 }

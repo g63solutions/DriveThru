@@ -8,4 +8,6 @@
         Failed to get results. Please try again.
     </string>
     <string name="action_share">Share</string>
+    <!--TODO 3 Add a string for settings menu-->
+    <string name="action_settings">Settings</string>
 </resources>
