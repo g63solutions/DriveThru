@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie);
+        setContentView(R.layout.layout_movie);
 //
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
         LinearLayoutManager layoutManager
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
             return true;
         }
-        // TODO 6 Launch SettingsActivity when the Settings option is clicked
+
         if (itemThatWasClickedId == R.id.action_settings) {
             Intent startSettingsActivity = new Intent(this, Settings.class);
             startActivity(startSettingsActivity);

@@ -8,6 +8,33 @@
         Failed to get results. Please try again.
     </string>
     <string name="action_share">Share</string>
-    <!--TODO 3 Add a string for settings menu-->
+
     <string name="action_settings">Settings</string>
+
+    <!--TODO 4 Put those preferences in strings and arrays-->
+    <!--Used by Preferences START  -->
+    <!-- - - - - - - - - - - - - - -->
+
+    <!--LIST PREFERENCE SORT sort=s value=v entry=e-->
+    <!--LIST PREFERENCE pref_general_settings.xml -->
+    <!--Array pref_sort_options-->
+    <!-- (defaultValue) Value for POPULAR option in sort preference [CHAR LIMIT=25] -->
+    <string name="pref_s_v_popular" translatable="false">popular</string>
+    <!-- Label for POPULAR option in sort preference [CHAR LIMIT=25] -->
+    <string name="pref_s_e_popular">Popular</string>
+
+    <!--Array pref_sort_values-->
+    <!-- (defaultValue) Value for TOP RATED option in sort preference [CHAR LIMIT=25] -->
+    <string name="pref_s_v_top_rated" translatable="false">top_rated</string>
+    <!-- label for TOP RATED option in sort preference [CHAR LIMIT=25] -->
+    <string name="pref_s_e_top_rated">Top Rated</string>
+
+    <!-- (key) KEY NOT TRANSLATABLE [CHAR LIMIT=25] -->
+    <string name="pref_s_key" translatable="false">sort</string>
+
+    <!-- (title) Sort label [CHAR LIMIT=25] -->
+    <string name="pref_s_title">Movie Sort</string>
+
+    <!--Used by Preferences END  -->
+    <!-- - - - - - - - - - - - - -->
 </resources>

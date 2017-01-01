@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--TODO 5 Put them in the arrays the file is simple one to one
+for example entry 1 refers to value 1-->
+<resources>
+    <string-array name="pref_sort_entries">
+        <item>@string/pref_s_e_popular</item>
+        <item>@string/pref_s_e_top_rated</item>
+    </string-array>
+
+    <string-array name="pref_sort_entryValues">
+        <item>@string/pref_s_v_popular</item>
+        <item>@string/pref_s_v_top_rated</item>
+    </string-array>
+</resources>

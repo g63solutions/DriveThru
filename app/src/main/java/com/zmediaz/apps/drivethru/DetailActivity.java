@@ -22,7 +22,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.layout_detail);
 
         /* Typical usage of findViewById... */
         mMovieDisplay = (TextView) findViewById(R.id.tv_detail);
@@ -56,10 +56,10 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        //TODO 7 get the id of the item that was clicked from the item param
+
         int id = item.getItemId();
 
-        //TODO 8 Launch Settings Activity when the menu is clicked
+
         if (id == R.id.action_settings) {
             Intent startSettingsActivity = new Intent(this, Settings.class);
             startActivity(startSettingsActivity);
@@ -67,7 +67,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
         }
-        //TODO 9 Dont forget to return if that was another option click
+
         return super.onOptionsItemSelected(item);
     }
 }

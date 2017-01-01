@@ -7,7 +7,7 @@
         android:orderInCategory="1"
         android:title="@string/main_menu"
         app:showAsAction="ifRoom" />
-    <!--TODO 5 Settings option added to menu main-->
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

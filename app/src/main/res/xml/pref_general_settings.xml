@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--TODO 2 Create an xml resource directory DON'T FORGET array xml-->
+    <!--TODO 3 Add a PreferenceScreen with a ListPreference
+    ListPreference within the newly created xml resource directory-->
+
+
+    <ListPreference
+        android:defaultValue="@string/pref_s_v_popular"
+        android:entries="@array/pref_sort_entries"
+        android:entryValues="@array/pref_sort_entryValues"
+        android:key="@string/pref_s_key"
+        android:title="@string/pref_s_title" />
+</PreferenceScreen>
