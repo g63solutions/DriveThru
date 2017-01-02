@@ -1,47 +1,56 @@
 package com.zmediaz.apps.drivethru;
 
-import android.content.Context;
+
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+
+import com.zmediaz.apps.drivethru.data.AppPreferences;
 import com.zmediaz.apps.drivethru.utilities.NetworkUtils;
 import com.zmediaz.apps.drivethru.utilities.TMDBJsonUtils;
 
 
 import java.net.URL;
 
+// TODO 2 Implement OnSharedPreferenceChangeListener on MainActivity
 public class MainActivity extends AppCompatActivity
-        implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]> {
+        implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
-
-    private static final String MOVIE_URL = "popular";
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
+
     private MovieAdapter mMovieAdapter;
 
     String mKey;
-    private String mSelector;
-    private MenuItem mMenuItem;
+
 
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
     //ATL 1 You need an ID to identify the loader its the first parameter
-    private static final int LOADER_INT = 7;
+    private static final int MOVIE_LOADER_INT = 7;
+
+    // TODO 3 Add a private static boolean flag for preference updates and
+    // initialize it to false
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +66,58 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(mMovieAdapter);
 
         mKey = getString(R.string.api);
-        mSelector = "popular";
 
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        //TODO 0 need a bundle here to save popular/top rated when clicked back
-        loadMain();
-
-        //ATL 2 Prepare the loader in onCreate.  Either re-connect with an existing one, or start a new one
+        //ATL 2 Prepare the loader in onCreate.  Either re-connect with an existing one,
+        // or start a new one
         LoaderManager.LoaderCallbacks<String[]> callback = MainActivity.this;
-        getSupportLoaderManager().initLoader(LOADER_INT, null, callback);
+        Bundle bundleForLoader = null;
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_INT, bundleForLoader, callback);
+
+        // TODO 5 Register MainActivity as a OnSharedPreferenceChangedListener in onCreate
+        /*
+         * Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
+         * SharedPreference has changed. Please note that we must unregister MainActivity as an
+         * OnSharedPreferenceChanged listener in onDestroy to avoid any memory leaks.
+         */
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        /*TODO 3.5 Flag tied to this on change loder is restarted
+         * If the preferences for location or units have changed since the user was last in
+         * MainActivity, perform another query and set the flag to false.
+         *
+         * This isn't the ideal solution because there really isn't a need to perform another
+         * GET request just to change the units, but this is the simplest solution that gets the
+         * job done for now.
+         */
+        // TODO 6 In onStart, if preferences have been changed, refresh the
+        // data and set the flag to false
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+            Log.d(TAG, "onStart: preferences were updated");
+
+            getSupportLoaderManager().restartLoader(MOVIE_LOADER_INT, null, this);
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    // TODO 7 Override onDestroy and unregister MainActivity as a SharedPreferenceChangedListener
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        /* Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks. */
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -77,7 +126,6 @@ public class MainActivity extends AppCompatActivity
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        mMenuItem = menu.findItem(R.id.action_sort);
 
         return true;
     }
@@ -86,15 +134,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
-        if (itemThatWasClickedId == R.id.action_sort) {
 
-            loadMainMenu();
-
-            Context context = MainActivity.this;
-            String textToShow = "Sort Menu clicked";
-            Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
-            return true;
-        }
 
         if (itemThatWasClickedId == R.id.action_settings) {
             Intent startSettingsActivity = new Intent(this, Settings.class);
@@ -116,55 +156,6 @@ public class MainActivity extends AppCompatActivity
         startActivity(startDetailClassIntent);
     }
 
-    //Loads menu when app starts
-    private void loadMain() {
-
-        if (mSelector.equals("popular")) {
-
-            urlQuery(mSelector);
-            mSelector = "top_rated";
-
-        } else {
-            urlQuery(mSelector);
-            mSelector = "popular";
-        }
-    }
-
-    //Loads Main menu from button press
-    private void loadMainMenu() {
-
-        String mPopular = "Popular";
-        String mTopRated = "Top Rated";
-
-        if (mSelector.equals("popular")) {
-
-            urlQuery(mSelector);
-            mSelector = "top_rated";
-            mMenuItem.setTitle(mPopular);
-        } else {
-            urlQuery(mSelector);
-            mSelector = "popular";
-            mMenuItem.setTitle(mTopRated);
-        }
-    }
-
-    /*ATL 3 If your loader requires a variable bundle it. Its an args get the args back with the keys.*/
-    private void urlQuery(String selection) {
-        URL movieRequestUrl = NetworkUtils.buildUrl(selection, mKey);
-        Bundle queryBundle = new Bundle();
-        queryBundle.putString(MOVIE_URL, movieRequestUrl.toString());
-
-        /*ATL 4 LoadManager Starts it pass the ID and the bundle*/
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> movieSearchLoader = loaderManager.getLoader(LOADER_INT);
-        if (movieSearchLoader == null) {
-            loaderManager.initLoader(LOADER_INT, queryBundle, this);
-        } else {
-            loaderManager.restartLoader(LOADER_INT, queryBundle, this);
-        }
-
-    }
-
 
     //ATL 5 Returns a String[] to onLoadFinished
     @Override
@@ -177,9 +168,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onStartLoading() {
 
-                if (args == null) {
+               /* if (args == null) {
                     return;
-                }
+                }*/
                 //ATL Load data if it has been destroyed and recreated
                 if (mMovieJson != null) {
                     deliverResult(mMovieJson);
@@ -191,15 +182,17 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public String[] loadInBackground() {
-                String queryUrl = args.getString(MOVIE_URL);
 
+                // TODO 8 Use sharedPreferences
+                String queryUrl = AppPreferences.isPopular(MainActivity.this);
+
+                URL mMovieUrl = NetworkUtils.buildUrl(queryUrl, mKey);
 
                 if (queryUrl == null || TextUtils.isEmpty(queryUrl)) {
                     return null;
                 }
 
                 try {
-                    URL mMovieUrl = new URL(queryUrl);
 
                     String jsonData = NetworkUtils
                             .getResponseFromHttpUrl(mMovieUrl);
@@ -255,6 +248,17 @@ public class MainActivity extends AppCompatActivity
         // Then, make sure the JSON data is visible
         mRecyclerView.setVisibility(View.VISIBLE);
     }
+
+    // TODO 4 Override onSharedPreferenceChanged to set the preferences flag to true
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+
+
+        PREFERENCES_HAVE_BEEN_UPDATED = true;
+
+    }
+
+
 }
 
 

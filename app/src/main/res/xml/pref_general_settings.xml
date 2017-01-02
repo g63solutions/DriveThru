@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--TODO 2 Create an xml resource directory DON'T FORGET array xml-->
-    <!--TODO 3 Add a PreferenceScreen with a ListPreference
+
     ListPreference within the newly created xml resource directory-->
 
 

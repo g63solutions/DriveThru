@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--TODO 5 Put them in the arrays the file is simple one to one
-for example entry 1 refers to value 1-->
 <resources>
     <string-array name="pref_sort_entries">
         <item>@string/pref_s_e_popular</item>

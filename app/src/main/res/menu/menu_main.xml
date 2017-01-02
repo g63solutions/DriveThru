@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--Search Button-->
+    <!--android:title="@string/main_menu"-->
     <item
         android:id="@+id/action_sort"
         android:orderInCategory="1"
-        android:title="@string/main_menu"
+
         app:showAsAction="ifRoom" />
 
     <item
