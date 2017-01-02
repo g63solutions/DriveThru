@@ -28,7 +28,8 @@ import com.zmediaz.apps.drivethru.utilities.TMDBJsonUtils;
 
 import java.net.URL;
 
-// TODO 2 Implement OnSharedPreferenceChangeListener on MainActivity
+// TODO 2 Implement OnSharedPreferenceChangeListener on MainActivity.
+// If you register a listener you must unregister it in on destroy!!!
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>,
         SharedPreferences.OnSharedPreferenceChangeListener {
