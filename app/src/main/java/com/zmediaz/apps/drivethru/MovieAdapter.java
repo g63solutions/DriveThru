@@ -1,6 +1,8 @@
 package com.zmediaz.apps.drivethru;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,65 +13,91 @@ import android.widget.TextView;
  * Created by Computer on 12/29/2016.
  */
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
+public class MovieAdapter
+        extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    private String[] mMovieData;
+    private final Context mContext;
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-        public final TextView mMovieTextView;
+    final private MovieAdapterOnClickHandler mClickHandler;
 
-        public MovieAdapterViewHolder(View view) {
-            super(view);
-            mMovieTextView = (TextView) view.findViewById(R.id.tv_movie_data);
-            view.setOnClickListener(this);
-        }
+    public interface MovieAdapterOnClickHandler {
+        void onClick(String title);
+    }
 
-        @Override
-        public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
-            String movie = mMovieData[adapterPosition];
-            mClickHandler.onClick(movie);
-        }
+    private Cursor mCursor;
+
+    public MovieAdapter(@NonNull Context context, MovieAdapterOnClickHandler clickHandler) {
+        mContext = context;
+        mClickHandler = clickHandler;
     }
 
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.layout_movie_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
-        View view = inflater.inflate(layoutIdForListItem, viewGroup,
-                shouldAttachToParentImmediately);
+        View view = LayoutInflater
+                .from(mContext)
+                .inflate(R.layout.layout_movie_list_item, viewGroup, false);
+
+        view.setFocusable(true);
+
+
         return new MovieAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
-        String movie = mMovieData[position];
-        movieAdapterViewHolder.mMovieTextView.setText(movie);
+        mCursor.moveToPosition(position);
+
+        /*MOVIE SUMMARY*/
+        String poster_path = mCursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
+        String original_title = mCursor.getString(MainActivity.INDEX_MOVIE_ORIGINAL_TITLE);
+
+        String mMovieTextView = poster_path + " - " + original_title + " - ";
+
+        movieAdapterViewHolder.mMovieTextView.setText(mMovieTextView);
 
     }
 
     @Override
     public int getItemCount() {
-        if (null == mMovieData) return 0;
-        return mMovieData.length;
+        if (null == mCursor) return 0;
+        return mCursor.getCount();
     }
 
-    public void setMovieData(String[] movieData) {
-        mMovieData = movieData;
+    void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
         notifyDataSetChanged();
     }
 
-    private final MovieAdapterOnClickHandler mClickHandler;
+    public class MovieAdapterViewHolder
+            extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+        final TextView mMovieTextView;
 
-    public interface MovieAdapterOnClickHandler {
-        void onClick(String movie);
+        MovieAdapterViewHolder(View view) {
+            super(view);
+            mMovieTextView = (TextView) view.findViewById(R.id.tv_movie_data);
+            view.setOnClickListener(this);
+        }
+
+        //TODO 37 37 37 37 37 37 37 37 37 37 37 377 3 73
+        @Override
+        public void onClick(View view) {
+
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            String originalTitle = mCursor.getString(MainActivity.INDEX_MOVIE_ORIGINAL_TITLE);
+            mClickHandler.onClick(originalTitle);
+
+            /*String movie = mMovieTextView.getText().toString();
+            mClickHandler.onClick(movie);*/
+        }
     }
-
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
-        mClickHandler = clickHandler;
-    }
-
 }
+
+
+
+
+
+
+
+
