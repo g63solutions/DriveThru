@@ -1,9 +1,11 @@
 package com.zmediaz.apps.drivethru.utilities;
 
 
+import android.content.Context;
 import android.net.Uri;
 
 
+import com.zmediaz.apps.drivethru.data.AppPreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,12 +28,15 @@ public class NetworkUtils {
     private static final String speak = "en-US";
     private final static String PARAM_PAGE = "page";
     private static final int page = 1;
+    private static String pref;
 
 
-    public static URL buildUrl(String selector, String key) {
+    public static URL buildUrl(Context context, String key) {
+
+        pref = AppPreferences.isPopular(context);
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                .appendPath(selector)
+                .appendPath(pref)
                 .appendQueryParameter(PARAM_API_KEY, key)
                 .appendQueryParameter(PARAM_LANGUAGE, speak)
                 .appendQueryParameter(PARAM_PAGE, Integer.toString(page))

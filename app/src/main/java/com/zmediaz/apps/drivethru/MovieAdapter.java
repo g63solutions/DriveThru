@@ -21,7 +21,7 @@ public class MovieAdapter
     final private MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(String title);
+        void onClick(long _id);
     }
 
     private Cursor mCursor;
@@ -51,7 +51,7 @@ public class MovieAdapter
         String poster_path = mCursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
         String original_title = mCursor.getString(MainActivity.INDEX_MOVIE_ORIGINAL_TITLE);
 
-        String mMovieTextView = poster_path + " - " + original_title + " - ";
+        String mMovieTextView = poster_path + " - " + original_title;
 
         movieAdapterViewHolder.mMovieTextView.setText(mMovieTextView);
 
@@ -85,8 +85,8 @@ public class MovieAdapter
 
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            String originalTitle = mCursor.getString(MainActivity.INDEX_MOVIE_ORIGINAL_TITLE);
-            mClickHandler.onClick(originalTitle);
+            long columnId = mCursor.getLong(MainActivity.INDEX_MOVIE_ID);
+            mClickHandler.onClick(columnId);
 
             /*String movie = mMovieTextView.getText().toString();
             mClickHandler.onClick(movie);*/

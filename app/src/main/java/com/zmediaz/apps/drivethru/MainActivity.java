@@ -3,91 +3,195 @@ package com.zmediaz.apps.drivethru;
 
 import android.content.Intent;
 
-import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 
-import com.zmediaz.apps.drivethru.data.AppPreferences;
-import com.zmediaz.apps.drivethru.utilities.NetworkUtils;
-import com.zmediaz.apps.drivethru.utilities.TMDBJsonUtils;
-
-
-import java.net.URL;
+import com.facebook.stetho.Stetho;
+import com.zmediaz.apps.drivethru.data.MovieContract;
+import com.zmediaz.apps.drivethru.sync.MovieSyncUtils;
 
 // TODO 2 Implement OnSharedPreferenceChangeListener on MainActivity.
 // If you register a listener you must unregister it in on destroy!!!
 public class MainActivity extends AppCompatActivity
-        implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        implements MovieAdapter.MovieAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
+    public static final String[] MAIN_MOVIE_SCREEN = {
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            MovieContract.MovieEntry._ID
+    };
 
-    private MovieAdapter mMovieAdapter;
+    public static final int INDEX_MOVIE_POSTER_PATH = 0;
+    public static final int INDEX_MOVIE_ORIGINAL_TITLE = 1;
+    public static final int INDEX_MOVIE_ID = 2;
 
-    String mKey;
-
-
-    private TextView mErrorMessageDisplay;
-
-    private ProgressBar mLoadingIndicator;
-    //ATL 1 You need an ID to identify the loader its the first parameter
     private static final int MOVIE_LOADER_INT = 7;
 
-    // TODO 3 Add a private static boolean flag for preference updates and
-    // initialize it to false
-    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
+    private MovieAdapter mMovieAdapter;
+    private RecyclerView mRecyclerView;
+    private int mPosition = RecyclerView.NO_POSITION;
+
+    private ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_movie);
+        getSupportActionBar().setElevation(0f);
+        Stetho.initializeWithDefaults(this);
 //
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(this);
-        mRecyclerView.setAdapter(mMovieAdapter);
-
-        mKey = getString(R.string.api);
-
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        //ATL 2 Prepare the loader in onCreate.  Either re-connect with an existing one,
-        // or start a new one
-        LoaderManager.LoaderCallbacks<String[]> callback = MainActivity.this;
-        Bundle bundleForLoader = null;
-        getSupportLoaderManager().initLoader(MOVIE_LOADER_INT, bundleForLoader, callback);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-        // TODO 5 Register MainActivity as a OnSharedPreferenceChangedListener in onCreate
-        /*
-         * Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
-         * SharedPreference has changed. Please note that we must unregister MainActivity as an
-         * OnSharedPreferenceChanged listener in onDestroy to avoid any memory leaks.
-         */
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mMovieAdapter = new MovieAdapter(this, this);
+
+        mRecyclerView.setAdapter(mMovieAdapter);
+
+        showLoading();
+
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_INT, null, this);
+
+        MovieSyncUtils.initialize(this);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, final Bundle args) {
+        switch (loaderId) {
+
+            case MOVIE_LOADER_INT:
+                /* URI for all rows of weather data in our weather table */
+                Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
+
+                /*CursorLoader
+
+                Added in API level 11
+                CursorLoader (Context context,
+                    Uri uri,
+                    String[] projection,
+                    String selection,
+                    String[] selectionArgs,
+                    String sortOrder)    */
+
+                /*PARAMETERS
+
+                URI-	Uri: The URI, using the content:// scheme, for the content to retrieve.
+
+                PROJECTION-	String: A list of which columns to return. Passing null will
+                return all columns, which is inefficient.
+
+                SELECTION-	String: A filter declaring which rows to return, formatted as
+                an SQL WHERE clause (excluding the WHERE itself). Passing null
+                will return all rows for the given URI.
+
+                SELECTION ARGS-	String: You may include ?s in selection, which will be
+                replaced by the values from selectionArgs, in the order that they appear
+                in the selection. The values will be bound as Strings.
+
+                SORT ORDER-	String: How to order the rows, formatted as an SQL ORDER BY
+                clause (excluding the ORDER BY itself). Passing null will use the default
+                sort order, which may be unordered.*/
+
+                return new CursorLoader(this,
+                        movieQueryUri,
+                        MAIN_MOVIE_SCREEN,
+                        null,
+                        null,
+                        null);
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + loaderId);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        mMovieAdapter.swapCursor(data);
+        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+        mRecyclerView.smoothScrollToPosition(mPosition);
+        if (data.getCount() != 0) showMovieDataView();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
+    }
+
+    //TODO Check this out
+    @Override
+    public void onClick(long columnId) {
+        Intent movieDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
+        Uri uriForTitleClicked = MovieContract.MovieEntry.buildMovieUriWithID(columnId);
+        movieDetailIntent.setData(uriForTitleClicked);
+        startActivity(movieDetailIntent);
+
+    }
+
+    private void showMovieDataView() {
+        /* First, hide the loading indicator */
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        /* Finally, make sure the weather data is visible */
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoading() {
+        /* Then, hide the weather data */
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        /* Finally, show the loading indicator */
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemThatWasClickedId = item.getItemId();
+
+
+        if (itemThatWasClickedId == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, Settings.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+        // If you do NOT handle the menu click,
+        // return super.onOptionsItemSelected to let Android handle the menu click
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    // TODO 3 Add a private static boolean flag for preference updates and
+    // initialize it to false
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     @Override
     protected void onStart() {
@@ -110,158 +214,7 @@ public class MainActivity extends AppCompatActivity
             PREFERENCES_HAVE_BEEN_UPDATED = false;
         }
     }
-
-    // TODO 7 Override onDestroy and unregister MainActivity as a SharedPreferenceChangedListener
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        /* Unregister MainActivity as an OnPreferenceChangedListener to avoid any memory leaks. */
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemThatWasClickedId = item.getItemId();
-
-
-        if (itemThatWasClickedId == R.id.action_settings) {
-            Intent startSettingsActivity = new Intent(this, Settings.class);
-            startActivity(startSettingsActivity);
-            return true;
-        }
-        // If you do NOT handle the menu click,
-        // return super.onOptionsItemSelected to let Android handle the menu click
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(String movie) {
-
-
-        Class detail = DetailActivity.class;
-        Intent startDetailClassIntent = new Intent(this, detail);
-        startDetailClassIntent.putExtra(Intent.EXTRA_TEXT, movie);
-        startActivity(startDetailClassIntent);
-    }
-
-
-    //ATL 5 Returns a String[] to onLoadFinished
-    @Override
-    public Loader<String[]> onCreateLoader(int id, final Bundle args) {
-        return new AsyncTaskLoader<String[]>(this) {
-
-            /*ATL 6 This String array will hold and help cache our weather data from deliverResult  */
-            String[] mMovieJson = null;
-
-            @Override
-            protected void onStartLoading() {
-
-               /* if (args == null) {
-                    return;
-                }*/
-                //ATL Load data if it has been destroyed and recreated
-                if (mMovieJson != null) {
-                    deliverResult(mMovieJson);
-                } else {
-                    mLoadingIndicator.setVisibility(View.VISIBLE);
-                    forceLoad();
-                }
-            }
-
-            @Override
-            public String[] loadInBackground() {
-
-                // TODO 8 Use sharedPreferences
-                String queryUrl = AppPreferences.isPopular(MainActivity.this);
-
-                URL mMovieUrl = NetworkUtils.buildUrl(queryUrl, mKey);
-
-                if (queryUrl == null || TextUtils.isEmpty(queryUrl)) {
-                    return null;
-                }
-
-                try {
-
-                    String jsonData = NetworkUtils
-                            .getResponseFromHttpUrl(mMovieUrl);
-
-                    String[] simpleJsonMovieData = TMDBJsonUtils
-                            .getSimpleMovieStringsFromJson(MainActivity.this, jsonData);
-
-                    return
-                            simpleJsonMovieData;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            @Override
-            public void deliverResult(String[] data) {
-
-                mMovieJson = data;
-                super.deliverResult(data);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<String[]> loader, String[] data) {
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieAdapter.setMovieData(data);
-        if (null == data) {
-            showErrorMessage();
-        } else {
-            showJsonDataView();
-
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<String[]> loader) {
-
-    }
-
-    private void showErrorMessage() {
-        // First, hide the currently visible data
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        // Then, show the error
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
-    }
-
-    private void showJsonDataView() {
-        // First, make sure the error is invisible
-        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        // Then, make sure the JSON data is visible
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    // TODO 4 Override onSharedPreferenceChanged to set the preferences flag to true
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-
-
-        PREFERENCES_HAVE_BEEN_UPDATED = true;
-
-    }
-
-
 }
-
 
 /*
 Toast.makeText(context, "This Is A Toast Android", Toast.LENGTH_SHORT)

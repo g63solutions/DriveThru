@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/poster_path"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 poster_path" />
+
+    <TextView
+        android:id="@+id/overview"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 overview" />
+
+    <TextView
+        android:id="@+id/release_date"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 release_date" />
+
+    <TextView
+        android:id="@+id/movie_id"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 movie_id" />
+
+    <TextView
+        android:id="@+id/original_title"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 original_title" />
+
+    <TextView
+        android:id="@+id/backdrop_path"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 original_title" />
+
+    <TextView
+        android:id="@+id/vote_average"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Saturday, September 24 vote_average" />
+
+
+</LinearLayout>
+
+    <!-- public static final String COLUMN_POSTER_PATH = "poster_path";
+     public static final String COLUMN_OVERVIEW = "overview";
+     public static final String COLUMN_RELEASE_DATE = "release_date";
+     public static final String COLUMN_MOVIE_ID = "movie_id";
+     public static final String COLUMN_ORIGINAL_TITLE = "original_title";
+     public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
+     public static final String COLUMN_VOTE_AVERAGE = "vote_average";-->
