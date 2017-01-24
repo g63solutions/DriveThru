@@ -23,8 +23,7 @@ import com.facebook.stetho.Stetho;
 import com.zmediaz.apps.drivethru.data.MovieContract;
 import com.zmediaz.apps.drivethru.sync.MovieSyncUtils;
 
-// TODO 2 Implement OnSharedPreferenceChangeListener on MainActivity.
-// If you register a listener you must unregister it in on destroy!!!
+
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity
         mMovieAdapter.swapCursor(null);
     }
 
-    //TODO Check this out
+
     @Override
     public void onClick(long columnId) {
         Intent movieDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
@@ -189,8 +188,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    // TODO 3 Add a private static boolean flag for preference updates and
-    // initialize it to false
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     @Override
@@ -205,8 +202,7 @@ public class MainActivity extends AppCompatActivity
          * GET request just to change the units, but this is the simplest solution that gets the
          * job done for now.
          */
-        // TODO 6 In onStart, if preferences have been changed, refresh the
-        // data and set the flag to false
+       
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
             Log.d(TAG, "onStart: preferences were updated");
 

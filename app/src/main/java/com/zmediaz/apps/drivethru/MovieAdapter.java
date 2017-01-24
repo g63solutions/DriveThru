@@ -79,7 +79,7 @@ public class MovieAdapter
             view.setOnClickListener(this);
         }
 
-        //TODO 37 37 37 37 37 37 37 37 37 37 37 377 3 73
+
         @Override
         public void onClick(View view) {
 
