@@ -26,7 +26,8 @@ public class MovieSyncTask {
 
             String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
 
-            ContentValues[] movieValues = TMDBJsonUtils.getSimpleMovieCVFromJson(jsonMovieResponse);
+            ContentValues[] movieValues = TMDBJsonUtils
+                    .getSimpleMovieCVFromJson(jsonMovieResponse);
 
             if (movieValues != null && movieValues.length != 0) {
 
