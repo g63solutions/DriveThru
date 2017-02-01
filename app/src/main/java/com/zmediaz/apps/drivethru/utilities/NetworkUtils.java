@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     //    https://api.themoviedb.org/3/movie/popular?
-// api_key=***SECRET***&language=en-US&page=1
+// api_key=***SECRETS***&language=en-US&page=1
     private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
     private final static String PARAM_API_KEY = "api_key";
     private final static String PARAM_LANGUAGE = "language";
